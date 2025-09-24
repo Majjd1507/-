@@ -170,3 +170,33 @@ base64 -w 0 android/app/my-release-key.jks > keystore.b64
 ```
 
 7) Важно: никогда не коммитьте `android/app/my-release-key.jks` и `android/key.properties` в репозиторий.
+
+Локальная генерация keystore (рекомендуется):
+
+```bash
+# интерактивно создаёт android/app/my-release-key.jks
+./scripts/generate_keystore.sh
+```
+
+Создание `android/key.properties` (НЕ коммитить в репозиторий):
+
+```text
+# android/key.properties
+storePassword=ВАШ_ПАРОЛЬ_KEYSTORE
+keyPassword=ВАШ_ПАРОЛЬ_КЛЮЧА
+keyAlias=ai_psychologist_alias
+storeFile=android/app/my-release-key.jks
+```
+
+Сборка релизного AAB локально:
+
+```bash
+flutter pub get
+flutter build appbundle --release
+```
+
+CI (Codemagic) — рекомендации:
+
+- Загрузите `android/app/my-release-key.jks` как защищённую базу64-переменную `KEYSTORE_BASE64`, или загрузите файл напрямую в Code signing.
+- Установите защищённые переменные `KEYSTORE_PASSWORD`, `KEY_PASSWORD`.
+- Пример workflow уже добавлен в `codemagic.yaml` — он декодирует keystore, создаёт `android/key.properties` и делает `flutter build appbundle --release`.

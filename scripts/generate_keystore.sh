@@ -1,3 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Usage: ./scripts/generate_keystore.sh
+# This creates `android/app/my-release-key.jks` interactively.
+
+KEYSTORE_PATH="android/app/my-release-key.jks"
+ALIAS="ai_psychologist_alias"
+
+mkdir -p "$(dirname "$KEYSTORE_PATH")"
+echo "This will create the Android keystore at: $KEYSTORE_PATH"
+keytool -genkeypair \
+  -v \
+  -keystore "$KEYSTORE_PATH" \
+  -alias "$ALIAS" \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000
+
+echo "Keystore created at $KEYSTORE_PATH"
+echo "Add an entry to android/key.properties (DO NOT COMMIT) with your passwords and path."
 #!/bin/bash
 
 # Simple helper to create a release keystore for Android
