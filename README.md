@@ -125,3 +125,48 @@
     - Во время ожидания ответа отображается индикатор набора текста.
 
 Проект готов к работе!
+
+## Подпись Android (keystore)
+
+Для публикации в Google Play вам потребуется `keystore` и настройки подписи.
+
+1) Сгенерируйте `keystore` (локально, в корне проекта):
+
+```bash
+keytool -genkeypair -v \
+    -keystore android/app/my-release-key.jks \
+    -alias ai_psychologist_alias \
+    -keyalg RSA -keysize 2048 -validity 10000
+```
+
+2) Скопируйте шаблон и заполните пароли (НЕ коммитьте реальные значения):
+
+```bash
+cp android/key.properties.template android/key.properties
+# Отредактируйте android/key.properties и заполните storePassword и keyPassword
+```
+
+3) Убедитесь, что keystore и `key.properties` игнорируются в `.gitignore` (файл уже добавлен в репозиторий).
+
+4) Локальная сборка релиза:
+
+```bash
+flutter pub get
+flutter build apk --release
+# Артефакт: build/app/outputs/flutter-apk/app-release.apk
+```
+
+5) Загрузка в Codemagic:
+- В Workflow Editor -> Code signing загрузите `android/app/my-release-key.jks`.
+- Укажите `Keystore password`, `Key alias` (ai_psychologist_alias) и `Key password`.
+- Запустите Release сборку.
+
+6) Если Codemagic не поддерживает прямую загрузку файла, загрузите keystore как base64 в защищённую переменную и восстановите файл в before-build шаге:
+
+```bash
+# Локально
+base64 -w 0 android/app/my-release-key.jks > keystore.b64
+# В Codemagic: создайте защищённую переменную KEYSTORE_BASE64 со значением содержимого keystore.b64
+```
+
+7) Важно: никогда не коммитьте `android/app/my-release-key.jks` и `android/key.properties` в репозиторий.
