@@ -1,0 +1,7 @@
+# Template for android/key.properties (DO NOT COMMIT actual file with secrets)
+# Copy this file to android/key.properties and replace placeholders with your values.
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=ai_psychologist_alias
+storeFile=android/app/my-release-key.jks

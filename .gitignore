@@ -1,3 +1,18 @@
+# Flutter/Dart
+.dart_tool/
+/.packages
+.package
+build/
+pubspec.lock
+
+# Android
+/android/.gradle
+/android/app/my-release-key.jks
+/android/key.properties
+
+# macOS
+/.idea/
+.DS_Store
 # Miscellaneous
 *.class
 *.log

@@ -1,0 +1,35 @@
+workflows:
+  android-release:
+    name: Android Release
+    max_build_duration: 120
+    environment:
+      vars:
+        KEYSTORE_BASE64:
+          secure: true
+        KEYSTORE_PASSWORD:
+          secure: true
+        KEY_PASSWORD:
+          secure: true
+        KEY_ALIAS: ai_psychologist_alias
+    scripts:
+      - name: Decode keystore
+        script: |
+          echo "$KEYSTORE_BASE64" | base64 -d > ./android/app/my-release-key.jks
+          chmod 600 ./android/app/my-release-key.jks
+      - name: Create key.properties
+        script: |
+          cat > android/key.properties <<EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=android/app/my-release-key.jks
+          EOF
+      - name: Flutter pub get
+        script: |
+          flutter pub get
+      - name: Build AAB
+        script: |
+          flutter build appbundle --release
+    publishing:
+      artifacts:
+        - build/app/outputs/bundle/release/app-release.aab
